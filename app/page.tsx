@@ -1,34 +1,32 @@
 'use client'
-import Image from "next/image";
-import { useRef } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-
-type Inputs = {
-  inputImage: FileList,
-};
+import { ChangeEvent, useState } from "react";
 
 import HeightMapScene from '@/components/HeightMapScene'
-
 export default function Home() {
-  const imageRef = useRef<HTMLImageElement | null>(null)
-  const { register, handleSubmit } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      console.log(reader.result);
-      if (imageRef.current) imageRef.current.src = reader.result as string;
-    }
-    reader.readAsDataURL(data.inputImage[0])
+  const [textureUrl, setTextureUrl] = useState<string | null>(null)
+
+  const createImageUrl = (buffer: ArrayBuffer, type: string) => {
+    const blob = new Blob([buffer], { type })
+    const urlCreator = window.URL || window.webkitURL
+    const imageUrl = urlCreator.createObjectURL(blob)
+    console.log(imageUrl)
+    return imageUrl
   }
+  const getTextureFile = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return
+    const file = e.target.files[0]
+    const { type } = file
+    const buffer = await file.arrayBuffer()
+    const imageUrl = createImageUrl(buffer, type)
+    setTextureUrl(imageUrl)
+    console.log(imageUrl)
+  }
+
 
   return (
     <div className="flex flex-col h-[100vh] w-full items-center justify-center">
-      <Image ref={imageRef} alt="background image" src={''} />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <input {...register("inputImage", { required: true })} type="file" accept=".jpeg, .png, .jpg" />
-        <button type="submit">submit</button>
-      </form>
-      <HeightMapScene />
+      <input type="file" onChange={(e) => getTextureFile(e)} />
+      <HeightMapScene inputTexture={textureUrl} />
 
     </div>
   );
