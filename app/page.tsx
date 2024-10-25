@@ -7,6 +7,7 @@ type Inputs = {
   inputImage: FileList,
 };
 
+import HeightMapScene from '@/components/HeightMapScene'
 
 export default function Home() {
   const imageRef = useRef<HTMLImageElement | null>(null)
@@ -27,6 +28,7 @@ export default function Home() {
         <input {...register("inputImage", { required: true })} type="file" accept=".jpeg, .png, .jpg" />
         <button type="submit">submit</button>
       </form>
+      <HeightMapScene />
 
     </div>
   );
