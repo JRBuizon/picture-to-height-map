@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
+import { BufferGeometry, Material, Mesh, MeshStandardMaterial, NormalBufferAttributes, Object3DEventMap } from 'three'
+import { TextureLoader } from "three";
 import * as THREE from 'three'
 
 const RESOLUTION = 1000
@@ -17,7 +19,7 @@ const calculateHeight = (
   return (pixelColor / maxPixelColor) * maxHeight
 }
 
-const HeightMapScene = () => {
+const HeightMapScene = ({ inputTexture }: { inputTexture: string | null }) => {
   const [imageData, setImageData] = useState<ImageData | undefined>(undefined)
 
   useEffect(() => {
@@ -43,6 +45,18 @@ const HeightMapScene = () => {
 
   const plane = useRef<THREE.Mesh<THREE.BufferGeometry<THREE.NormalBufferAttributes>, THREE.Material | THREE.Material[], THREE.Object3DEventMap>>(null)
   const mesh = useRef<THREE.MeshStandardMaterial>(null)
+  // useEffect(() => {
+  //   if (inputTexture) {
+  //     const textureLoader = new TextureLoader()
+  //     textureLoader.load(inputTexture, (t) => {
+  //       if (mesh.current) {
+  //         mesh.current.displacementMap = t
+  //         mesh.current.map = t
+  //         mesh.current.needsUpdate = true
+  //       }
+  //     })
+  //   }
+  // }, [inputTexture])
   useEffect(() => {
     if (imageData && plane.current) {
       for (let y = 0; y < RESOLUTION; y++) {
@@ -98,4 +112,4 @@ const HeightMapScene = () => {
   )
 }
 
-export default HeightMapScene
+export default HeightMapScene;
