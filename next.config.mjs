@@ -1,7 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    transpilePackages: ['three'],
+  transpilePackages: ['three'],
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3000',
+        pathname: './public/denali.png',
+      },
+    ],
+  },
+}
 
-};
-
-export default nextConfig;
+export default nextConfig
