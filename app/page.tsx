@@ -1,5 +1,10 @@
+'use client'
+import HeightMapScene from '@/components/HeightMapScene'
+
 export default function Home() {
   return (
-    <div></div>
-  );
+    <div className='h-full w-full'>
+      <HeightMapScene />
+    </div>
+  )
 }
