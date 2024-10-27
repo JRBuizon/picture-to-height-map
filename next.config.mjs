@@ -2,6 +2,7 @@
 const nextConfig = {
   transpilePackages: ['three'],
   images: {
+    domains:['localhost'],
     remotePatterns: [
       {
         protocol: 'http',
