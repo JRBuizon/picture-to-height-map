@@ -1,20 +1,41 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-// import { TextureLoader } from "three";
-import * as THREE from 'three'
+import { Canvas, useFrame } from "@react-three/fiber";
+import * as THREE from "three";
+import { HeightMapModel } from "./HeightMapModel";
+
 const RESOLUTION = 500
+
+const generateHeightMap = () => {
+  // create html image
+  return new Promise<Array<number>>((resolve) => {
+    const canvas = document.createElement("canvas");
+    canvas.height = 64;
+    canvas.width = 64;
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.onload = () => {
+      ctx?.drawImage(img, 0, 0, 64, 64);
+      const imageData = ctx?.getImageData(0, 0, 64, 64, {
+        colorSpace: "srgb",
+      });
+      resolve(imageData);
+    };
+    img.src = "/denali.png";
+  });
+};
+
 const calculateHeight = (
   r: number,
   g: number,
   b: number,
   maxHeight: number,
 ) => {
-  const maxPixelColor = 256 * 256 * 256
-  const pixelColor = r * g * b
+  const maxPixelColor = 256 * 256 * 256;
+  const pixelColor = r * g * b;
 
-  return (pixelColor / maxPixelColor) * maxHeight
-}
+  return (pixelColor / maxPixelColor) * maxHeight;
+};
 
 const HeightMapScene = ({ inputImage }: { inputImage: string | null }) => {
   const [imageData, setImageData] = useState<ImageData | undefined>(undefined)
@@ -67,6 +88,7 @@ const HeightMapScene = ({ inputImage }: { inputImage: string | null }) => {
   return (
     <div className='w-full h-full'>
       <canvas className='hidden' ref={canvasRef} width={RESOLUTION} height={RESOLUTION} />
+      <HeightMapModel calculateHeight={calculateHeight} data={ImageData} resolution={RESOLUTION} />
       <Canvas shadows className='bg-black' camera={camera}>
         <mesh
           rotation={[Math.PI / 2, 0, 5]}

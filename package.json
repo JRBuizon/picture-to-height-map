@@ -17,7 +17,11 @@
     "react": "^18",
     "react-dom": "^18",
     "three": "^0.169.0",
+<<<<<<< HEAD
     "react-hook-form": "^7.53.1"
+=======
+    "use-timer": "^2.0.1"
+>>>>>>> 21191c1 (feat: animations for generation of heightmap)
   },
   "devDependencies": {
     "@types/node": "^20",

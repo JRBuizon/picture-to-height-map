@@ -31,7 +31,6 @@ export default function Home() {
     <div className="flex flex-col h-[100vh] w-full items-center justify-center">
       <input type="file" onChange={(e) => getImageData(e)} />
       <HeightMapScene inputImage={imageUrl} />
-
     </div>
   );
 }
