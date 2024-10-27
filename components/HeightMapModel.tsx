@@ -3,50 +3,54 @@ import { useFrame } from "@react-three/fiber";
 import { useTimer } from "use-timer";
 import * as THREE from "three";
 
-const HeightMapModel = ({ calculateHeight, data }) => {
+const HeightMapModel = ({ calculateHeight, data, resolution }) => {
   const [vmap, setVmap] = useState([]);
 
   const plane = React.useRef();
 
   const { time, start, pause, reset, status } = useTimer({
-    initialTime: 4,
-    endTime: 10,
+    initialTime: 0,
+    endTime: 100,
   });
 
   React.useEffect(() => {
-    const mapTemp = new Array(64).fill(0);
-    const map = mapTemp.map(() => new Array(64));
-    data.then((value) => {
-      for (let y = 0; y < 64; y++) {
-        for (let x = 0; x < 64; x++) {
-          const index = (x + y * 64) * 4;
-          const r = value.data[index];
-          const g = value.data[index + 1];
-          const b = value.data[index + 2];
+    console.log('rerunning useeffect')
+    const mapTemp = new Array(resolution).fill(0);
+    const map = mapTemp.map(() => new Array(resolution));
+      for (let y = 0; y < resolution; y++) {
+        for (let x = 0; x < resolution; x++) {
+          const index = (x + y * resolution) * 4;
+          const r = data.data[index];
+          const g = data.data[index + 1];
+          const b = data.data[index + 2];
 
-          const height = calculateHeight(r, g, b, 100);
+          const height = calculateHeight(r, g, b, 200);
           map[y][x] = -height;
         }
       }
       setVmap(map);
       start();
-    });
-  }, []);
+  }, [data]);
 
   useFrame(() => {
     if (status === "RUNNING") {
-      for (let y = 0; y < 64; y++) {
-        for (let x = 0; x < 64; x++) {
-          const index = (x + y * 64) * 3;
+      for (let y = 0; y < resolution; y++) {
+        for (let x = 0; x < resolution; x++) {
+          const index = (x + y * resolution) * 3;
           if (
-            plane.current.geometry.attributes.position.array[index + 2] >=
+            plane.current.geometry.attributes.position.array[index + 2] >
             vmap[y][x]
           ) {
             plane.current.geometry.attributes.position.array[index + 2]--;
           }
+          if (
+            plane.current.geometry.attributes.position.array[index + 2] <
+            vmap[y][x]
+          ) {
+            plane.current.geometry.attributes.position.array[index + 2]++;
+          }
         }
       }
-      console.log("running");
       plane.current.geometry.attributes.position.needsUpdate = true;
     }
   });
@@ -59,7 +63,7 @@ const HeightMapModel = ({ calculateHeight, data }) => {
       receiveShadow
       castShadow
     >
-      <planeGeometry args={[200, 200, 63, 63]} />
+      <planeGeometry args={[250, 250, resolution-1, resolution-1]} />
       <meshStandardMaterial
         wireframe={false}
         color="#FFA500"

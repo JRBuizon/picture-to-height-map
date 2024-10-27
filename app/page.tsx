@@ -19,6 +19,7 @@ export default function Home() {
   //   createImageUrl(buffer, type)
   // }
   const getImageData = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault()
     const reader = new FileReader();
     reader.onload = () => {
       console.log(reader.result);
