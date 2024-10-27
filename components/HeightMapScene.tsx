@@ -1,22 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { OrbitControls } from '@react-three/drei'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import { HeightMapModel } from './HeightMapModel'
 
-const RESOLUTION = 500
+const RESOLUTION = 200
 
-const calculateHeight = (
-  r: number,
-  g: number,
-  b: number,
-  maxHeight: number,
-) => {
-  const maxPixelColor = 256 * 256 * 256
-  const pixelColor = r * g * b
 
-  return (pixelColor / maxPixelColor) * maxHeight
-}
 
 const HeightMapScene = ({ inputImage }: { inputImage: string | null }) => {
   const [imageData, setImageData] = useState<ImageData | undefined>(undefined)
@@ -32,7 +22,6 @@ const HeightMapScene = ({ inputImage }: { inputImage: string | null }) => {
         const data = ctx?.getImageData(0, 0, canvas.width, canvas.height, {
           colorSpace: 'srgb',
         })
-        console.log(data)
         setImageData(data)
       }
       img.src = inputImage ? inputImage : ''
@@ -41,17 +30,7 @@ const HeightMapScene = ({ inputImage }: { inputImage: string | null }) => {
 
   const camera = new THREE.PerspectiveCamera()
   camera.far = 5000
-  camera.position.set(-RESOLUTION/15, RESOLUTION/15, -RESOLUTION/15)
-
-  const plane =
-    useRef<
-      THREE.Mesh<
-        THREE.BufferGeometry<THREE.NormalBufferAttributes>,
-        THREE.Material | THREE.Material[],
-        THREE.Object3DEventMap
-      >
-    >(null)
-  const mesh = useRef<THREE.MeshStandardMaterial>(null)
+  camera.position.set(-RESOLUTION / 15, RESOLUTION / 15, -RESOLUTION / 15)
 
   return (
     <div className='w-full h-full'>
@@ -62,11 +41,10 @@ const HeightMapScene = ({ inputImage }: { inputImage: string | null }) => {
         height={RESOLUTION}
       />
       <Canvas shadows className='bg-black' camera={camera}>
-      { inputImage && imageData ? <HeightMapModel
-        calculateHeight={calculateHeight}
-        data={imageData}
-        resolution={RESOLUTION}
-      /> : '' }
+        {inputImage && imageData ? <HeightMapModel
+          data={imageData}
+          resolution={RESOLUTION}
+        /> : ''}
         <axesHelper args={[RESOLUTION]} />
         <OrbitControls />
         <ambientLight intensity={0.3} />
