@@ -1,7 +1,7 @@
 'use client'
 import { ChangeEvent, useState } from "react";
 
-import HeightMapScene from '@/components/HeightMapScene'
+import HeightMapScene from '@/app/HeightMapScene'
 export default function Home() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
 
@@ -15,8 +15,11 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col h-[100vh] w-full items-center justify-center">
-      <input type="file" onChange={(e) => getImageData(e)} />
+    <div className="bg-black flex flex-col p-2 h-[100vh] w-full items-start justify-center">
+      <label className="w-24 rounded-lg text-sm bg-white text-center">
+        <input className="hidden" type="file" onChange={(e) => getImageData(e)} />
+        Add file
+      </label>
       <HeightMapScene inputImage={imageUrl} />
     </div>
   );

@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { OrbitControls } from '@react-three/drei'
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { HeightMapModel } from './HeightMapModel'
 
-const RESOLUTION = 200
-
-
+const RESOLUTION = 256
 
 const HeightMapScene = ({ inputImage }: { inputImage: string | null }) => {
   const [imageData, setImageData] = useState<ImageData | undefined>(undefined)
@@ -29,8 +27,18 @@ const HeightMapScene = ({ inputImage }: { inputImage: string | null }) => {
   }, [inputImage])
 
   const camera = new THREE.PerspectiveCamera()
-  camera.far = 5000
-  camera.position.set(-RESOLUTION / 15, RESOLUTION / 15, -RESOLUTION / 15)
+  camera.far = 500
+  camera.position.set(-RESOLUTION/15, RESOLUTION/15, -RESOLUTION/15)
+
+  const plane =
+    useRef<
+      THREE.Mesh<
+        THREE.BufferGeometry<THREE.NormalBufferAttributes>,
+        THREE.Material | THREE.Material[],
+        THREE.Object3DEventMap
+      >
+    >(null)
+  const mesh = useRef<THREE.MeshStandardMaterial>(null)
 
   return (
     <div className='w-full h-full'>
@@ -41,10 +49,10 @@ const HeightMapScene = ({ inputImage }: { inputImage: string | null }) => {
         height={RESOLUTION}
       />
       <Canvas shadows className='bg-black' camera={camera}>
-        {inputImage && imageData ? <HeightMapModel
-          data={imageData}
-          resolution={RESOLUTION}
-        /> : ''}
+      { inputImage && imageData ? <HeightMapModel
+        imagePath={inputImage}
+        resolution={RESOLUTION}
+      /> : '' }
         <axesHelper args={[RESOLUTION]} />
         <OrbitControls />
         <ambientLight intensity={0.3} />
